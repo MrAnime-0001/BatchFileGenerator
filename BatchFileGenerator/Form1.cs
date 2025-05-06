@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace BatchFileGenerator
 {
@@ -39,10 +40,10 @@ namespace BatchFileGenerator
                 fileName += ".bat";
             }
 
-            // Define the batch file content to copy text to clipboard
             string batchContent = @$"@echo off
-echo|set /p=""{textToCopy}"" | clip";
 
+
+echo|set /p=""{textToCopy}"" | clip";
             SaveBatchFile(fileName, batchContent);
         }
 
@@ -88,11 +89,74 @@ echo|set /p=""{textToCopy}"" | clip";
                 MessageBox.Show($"Batch file created successfully at:\n{batchFilePath}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 rtbTextToCopy.Clear();
                 txtFileName.Clear();
+                btnCopyToClipboard.Enabled = true;
+                btnCopyToClipboard.ForeColor = Color.Black;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void AddToRichTextBox(string text)
+        {
+            if (!string.IsNullOrWhiteSpace(rtbTextToCopy.Text))
+            {
+                if (!rtbTextToCopy.Text.StartsWith("@echo off"))
+                {
+                    rtbTextToCopy.Text = "@echo off\n\n" + rtbTextToCopy.Text;
+                }
+                rtbTextToCopy.AppendText("\n\n" + text);
+            }
+            else
+            {
+                rtbTextToCopy.Text = "@echo off\n\n" + text;
+            }
+
+            btnCopyToClipboard.Enabled = false;
+            btnCopyToClipboard.ForeColor = Color.Gray;
+        }
+
+        private void btnAddRoboCopy_Click(object sender, EventArgs e)
+        {
+            AddToRichTextBox(@"robocopy ""source"" ""destination"" ""file name"" /z /e");
+        }
+
+        private void btnAddDeleteSpecificFile_Click(object sender, EventArgs e)
+        {
+            AddToRichTextBox(@"del /q ""C:\Users\YourName\Documents\file.txt""");
+        }
+
+        private void btnAddDeleteAllFilesinFolder_Click(object sender, EventArgs e)
+        {
+            AddToRichTextBox(@"del /q ""C:\Users\YourName\Documents\*.*""");
+        }
+
+        private void btnAddFolderDelete_Click(object sender, EventArgs e)
+        {
+            AddToRichTextBox(@"rmdir /s /q ""C:\Path\to\Directory""");
+        }
+
+        private void btnAddTaskKill_Click(object sender, EventArgs e)
+        {
+            AddToRichTextBox(@"taskkill /F /IM ""application name""");
+        }
+
+        private void btnAddWaitTime_Click(object sender, EventArgs e)
+        {
+            AddToRichTextBox(@"timeout /t <seconds> /nobreak >nul  REM Waits for specified seconds");
+        }
+
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            rtbTextToCopy.Clear();
+            btnCopyToClipboard.Enabled = true;
+            btnCopyToClipboard.ForeColor = Color.Black;
+        }
+
+        private void btnExitApplication_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }
