@@ -41,6 +41,7 @@
             btnAddDeleteAllFilesinFolder = new Button();
             btnAddWaitTime = new Button();
             btnExitApplication = new Button();
+            btnAddCreateFolder = new Button();
             SuspendLayout();
             // 
             // lblFileName
@@ -65,7 +66,7 @@
             // 
             btnCopyToClipboard.Location = new Point(328, 12);
             btnCopyToClipboard.Name = "btnCopyToClipboard";
-            btnCopyToClipboard.Size = new Size(109, 267);
+            btnCopyToClipboard.Size = new Size(109, 278);
             btnCopyToClipboard.TabIndex = 4;
             btnCopyToClipboard.Text = "Create Clipboard Batch File";
             btnCopyToClipboard.UseVisualStyleBackColor = true;
@@ -81,9 +82,9 @@
             // 
             // btnCreateExecutableBatch
             // 
-            btnCreateExecutableBatch.Location = new Point(328, 279);
+            btnCreateExecutableBatch.Location = new Point(328, 291);
             btnCreateExecutableBatch.Name = "btnCreateExecutableBatch";
-            btnCreateExecutableBatch.Size = new Size(109, 267);
+            btnCreateExecutableBatch.Size = new Size(109, 278);
             btnCreateExecutableBatch.TabIndex = 6;
             btnCreateExecutableBatch.Text = "Create Executable Batch File";
             btnCreateExecutableBatch.UseVisualStyleBackColor = true;
@@ -91,7 +92,7 @@
             // 
             // btnReset
             // 
-            btnReset.Location = new Point(12, 500);
+            btnReset.Location = new Point(12, 523);
             btnReset.Name = "btnReset";
             btnReset.Size = new Size(310, 23);
             btnReset.TabIndex = 7;
@@ -111,7 +112,7 @@
             // 
             // btnAddFolderDelete
             // 
-            btnAddFolderDelete.Location = new Point(12, 431);
+            btnAddFolderDelete.Location = new Point(12, 454);
             btnAddFolderDelete.Name = "btnAddFolderDelete";
             btnAddFolderDelete.Size = new Size(310, 23);
             btnAddFolderDelete.TabIndex = 9;
@@ -121,7 +122,7 @@
             // 
             // btnAddTaskKill
             // 
-            btnAddTaskKill.Location = new Point(12, 454);
+            btnAddTaskKill.Location = new Point(12, 477);
             btnAddTaskKill.Name = "btnAddTaskKill";
             btnAddTaskKill.Size = new Size(310, 23);
             btnAddTaskKill.TabIndex = 10;
@@ -151,7 +152,7 @@
             // 
             // btnAddWaitTime
             // 
-            btnAddWaitTime.Location = new Point(12, 477);
+            btnAddWaitTime.Location = new Point(12, 500);
             btnAddWaitTime.Name = "btnAddWaitTime";
             btnAddWaitTime.Size = new Size(310, 23);
             btnAddWaitTime.TabIndex = 13;
@@ -161,7 +162,7 @@
             // 
             // btnExitApplication
             // 
-            btnExitApplication.Location = new Point(12, 523);
+            btnExitApplication.Location = new Point(12, 546);
             btnExitApplication.Name = "btnExitApplication";
             btnExitApplication.Size = new Size(310, 23);
             btnExitApplication.TabIndex = 14;
@@ -169,12 +170,23 @@
             btnExitApplication.UseVisualStyleBackColor = true;
             btnExitApplication.Click += btnExitApplication_Click;
             // 
+            // btnAddCreateFolder
+            // 
+            btnAddCreateFolder.Location = new Point(12, 431);
+            btnAddCreateFolder.Name = "btnAddCreateFolder";
+            btnAddCreateFolder.Size = new Size(310, 23);
+            btnAddCreateFolder.TabIndex = 15;
+            btnAddCreateFolder.Text = "Add Create Folder";
+            btnAddCreateFolder.UseVisualStyleBackColor = true;
+            btnAddCreateFolder.Click += btnAddCreateFolder_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(12, 12, 12);
-            ClientSize = new Size(443, 552);
+            ClientSize = new Size(444, 575);
+            Controls.Add(btnAddCreateFolder);
             Controls.Add(btnExitApplication);
             Controls.Add(btnAddWaitTime);
             Controls.Add(btnAddDeleteAllFilesinFolder);
@@ -211,5 +223,6 @@
         private Button btnAddDeleteAllFilesinFolder;
         private Button btnAddWaitTime;
         private Button btnExitApplication;
+        private Button btnAddCreateFolder;
     }
 }

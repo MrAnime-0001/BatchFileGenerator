@@ -132,6 +132,11 @@ echo|set /p=""{textToCopy}"" | clip";
             AddToRichTextBox(@"del /q ""C:\Users\YourName\Documents\*.*""");
         }
 
+        private void btnAddCreateFolder_Click(object sender, EventArgs e)
+        {
+            AddToRichTextBox(@"mkdir ""C:\Path\To\NewFolder""");
+        }
+
         private void btnAddFolderDelete_Click(object sender, EventArgs e)
         {
             AddToRichTextBox(@"rmdir /s /q ""C:\Path\to\Directory""");
