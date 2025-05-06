@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             lblFileName = new Label();
-            lblTextToCopy = new Label();
             txtFileName = new TextBox();
-            txtTextToCopy = new TextBox();
-            btnGenerate = new Button();
+            btnCopyToClipboard = new Button();
+            rtbTextToCopy = new RichTextBox();
+            btnCreateExecutableBatch = new Button();
             SuspendLayout();
             // 
             // lblFileName
@@ -45,52 +45,52 @@
             lblFileName.TabIndex = 0;
             lblFileName.Text = "File Name";
             // 
-            // lblTextToCopy
-            // 
-            lblTextToCopy.AutoSize = true;
-            lblTextToCopy.ForeColor = Color.White;
-            lblTextToCopy.Location = new Point(12, 44);
-            lblTextToCopy.Name = "lblTextToCopy";
-            lblTextToCopy.Size = new Size(75, 15);
-            lblTextToCopy.TabIndex = 1;
-            lblTextToCopy.Text = "Text To Copy";
-            // 
             // txtFileName
             // 
             txtFileName.ForeColor = Color.Black;
-            txtFileName.Location = new Point(93, 12);
+            txtFileName.Location = new Point(72, 12);
             txtFileName.Name = "txtFileName";
-            txtFileName.Size = new Size(129, 23);
+            txtFileName.Size = new Size(250, 23);
             txtFileName.TabIndex = 2;
             // 
-            // txtTextToCopy
+            // btnCopyToClipboard
             // 
-            txtTextToCopy.ForeColor = Color.Black;
-            txtTextToCopy.Location = new Point(93, 41);
-            txtTextToCopy.Name = "txtTextToCopy";
-            txtTextToCopy.Size = new Size(129, 23);
-            txtTextToCopy.TabIndex = 3;
+            btnCopyToClipboard.Location = new Point(12, 362);
+            btnCopyToClipboard.Name = "btnCopyToClipboard";
+            btnCopyToClipboard.Size = new Size(310, 23);
+            btnCopyToClipboard.TabIndex = 4;
+            btnCopyToClipboard.Text = "Create Clipboard Batch File";
+            btnCopyToClipboard.UseVisualStyleBackColor = true;
+            btnCopyToClipboard.Click += btnCopyToClipboard_Click;
             // 
-            // btnGenerate
+            // rtbTextToCopy
             // 
-            btnGenerate.Location = new Point(12, 70);
-            btnGenerate.Name = "btnGenerate";
-            btnGenerate.Size = new Size(210, 23);
-            btnGenerate.TabIndex = 4;
-            btnGenerate.Text = "Generate Batch File";
-            btnGenerate.UseVisualStyleBackColor = true;
-            btnGenerate.Click += btnGenerate_Click;
+            rtbTextToCopy.Location = new Point(12, 41);
+            rtbTextToCopy.Name = "rtbTextToCopy";
+            rtbTextToCopy.Size = new Size(310, 315);
+            rtbTextToCopy.TabIndex = 5;
+            rtbTextToCopy.Text = "";
+            // 
+            // btnCreateExecutableBatch
+            // 
+            btnCreateExecutableBatch.Location = new Point(12, 391);
+            btnCreateExecutableBatch.Name = "btnCreateExecutableBatch";
+            btnCreateExecutableBatch.Size = new Size(310, 23);
+            btnCreateExecutableBatch.TabIndex = 6;
+            btnCreateExecutableBatch.Text = "Create Executable Batch File";
+            btnCreateExecutableBatch.UseVisualStyleBackColor = true;
+            btnCreateExecutableBatch.Click += btnCreateExecutableBatch_Click;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(12, 12, 12);
-            ClientSize = new Size(234, 100);
-            Controls.Add(btnGenerate);
-            Controls.Add(txtTextToCopy);
+            ClientSize = new Size(336, 421);
+            Controls.Add(btnCreateExecutableBatch);
+            Controls.Add(rtbTextToCopy);
+            Controls.Add(btnCopyToClipboard);
             Controls.Add(txtFileName);
-            Controls.Add(lblTextToCopy);
             Controls.Add(lblFileName);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "Form1";
@@ -103,9 +103,9 @@
         #endregion
 
         private Label lblFileName;
-        private Label lblTextToCopy;
         private TextBox txtFileName;
-        private TextBox txtTextToCopy;
-        private Button btnGenerate;
+        private Button btnCopyToClipboard;
+        private RichTextBox rtbTextToCopy;
+        private Button btnCreateExecutableBatch;
     }
 }
