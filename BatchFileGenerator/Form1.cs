@@ -1,12 +1,53 @@
-using System;
-using System.IO;
-using System.Windows.Forms;
+﻿using System;
 using System.Drawing;
+using System.IO;
+using System.Media;
+using System.Windows.Forms;
 
 namespace BatchFileGenerator
 {
     public partial class Form1 : Form
     {
+
+        public static void ShowToast(string message, int duration = 2000, bool playSound = true)
+        {
+            Form toast = new Form
+            {
+                FormBorderStyle = FormBorderStyle.None,
+                StartPosition = FormStartPosition.Manual,
+                ShowInTaskbar = false,
+                TopMost = true,
+                BackColor = Color.FromArgb(45, 45, 48),
+                Size = new Size(250, 60),
+                Opacity = 0.9
+            };
+
+            toast.Controls.Add(new Label
+            {
+                Text = message,
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                ForeColor = Color.White
+            });
+
+            var screen = Screen.PrimaryScreen.WorkingArea;
+            toast.Location = new Point(screen.Right - toast.Width - 10, screen.Bottom - toast.Height - 10);
+
+            toast.Shown += async (s, e) =>
+            {
+                if (playSound)
+                {
+                    SystemSounds.Exclamation.Play(); // Default Windows notification sound
+                }
+
+                await Task.Delay(duration);
+                toast.Close();
+            };
+
+            toast.Show();
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -19,19 +60,19 @@ namespace BatchFileGenerator
 
             if (string.IsNullOrWhiteSpace(textToCopy))
             {
-                MessageBox.Show("Please enter text to copy to the clipboard.", "Input Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ShowToast("⚠️ Please enter text to copy to the clipboard.", 3000, false);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(fileName))
             {
-                MessageBox.Show("Please enter a file name for the batch file.", "Input Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ShowToast("⚠️ Please enter a file name for the batch file.", 3000, false);
                 return;
             }
 
             if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
             {
-                MessageBox.Show("File name contains invalid characters.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ShowToast("⚠️ File name contains invalid characters.", 3000, false);
                 return;
             }
 
@@ -54,19 +95,19 @@ echo|set /p=""{textToCopy}"" | clip";
 
             if (string.IsNullOrWhiteSpace(batchContent))
             {
-                MessageBox.Show("Please enter batch commands to execute.", "Input Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ShowToast("⚠️ Please enter batch commands to execute.", 3000, false);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(fileName))
             {
-                MessageBox.Show("Please enter a file name for the batch file.", "Input Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ShowToast("⚠️ Please enter a file name for the batch file.", 3000, false);
                 return;
             }
 
             if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
             {
-                MessageBox.Show("File name contains invalid characters.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ShowToast("⚠️ File name contains invalid characters.", 3000, false);
                 return;
             }
 
@@ -86,7 +127,7 @@ echo|set /p=""{textToCopy}"" | clip";
             try
             {
                 File.WriteAllText(batchFilePath, content);
-                MessageBox.Show($"Batch file created successfully at:\n{batchFilePath}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ShowToast($"✅ Batch file created successfully at:\n{batchFilePath}", 4000, true);
                 rtbTextToCopy.Clear();
                 txtFileName.Clear();
                 btnCopyToClipboard.Enabled = true;
@@ -94,7 +135,7 @@ echo|set /p=""{textToCopy}"" | clip";
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowToast($"❌ An error occurred: {ex.Message}", 4000, false);
             }
         }
 
