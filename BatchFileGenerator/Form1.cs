@@ -163,6 +163,47 @@ echo|set /p=""{textToCopy}"" | clip";
             AddToRichTextBox(@"robocopy ""source"" ""destination"" ""file name"" /z /e");
         }
 
+        private void btnVersionControlCopy_Click(object sender, EventArgs e)
+        {
+            string versionControlCopyPreset =
+@"@echo off
+setlocal
+
+:: Set the source and destination directories
+set ""source_folder=C:\path\to\source_folder""
+set ""destination_folder=C:\path\to\destination_folder""
+
+:: Set the optional base name for the copied folder
+:: Leave empty to use default naming with ""v1"", ""v2"", etc.
+set ""SetName=Copy""
+
+:: Initialize the copy counter
+set ""count=1""
+
+:: Check for existing copies and find the next available number
+:check_existing
+if defined SetName (
+    set ""folder_name=%SetName% v%count%""
+) else (
+    set ""folder_name=v%count%""
+)
+
+if exist ""%destination_folder%\%folder_name%"" (
+    set /a count+=1
+    goto :check_existing
+)
+
+:: Copy the folder and rename it with the incremented count
+xcopy ""%source_folder%"" ""%destination_folder%\%folder_name%"" /E /I
+
+echo Folder copied to ""%destination_folder%\%folder_name%""
+
+endlocal
+pause";
+
+            AddToRichTextBox(versionControlCopyPreset);
+        }
+
         private void btnAddDeleteSpecificFile_Click(object sender, EventArgs e)
         {
             AddToRichTextBox(@"del /q ""C:\Users\YourName\Documents\file.txt""");

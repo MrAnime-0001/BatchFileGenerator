@@ -42,6 +42,7 @@
             btnAddWaitTime = new Button();
             btnExitApplication = new Button();
             btnAddCreateFolder = new Button();
+            btnVersionControlCopy = new Button();
             SuspendLayout();
             // 
             // lblFileName
@@ -75,7 +76,7 @@
             btnCopyToClipboard.ForeColor = Color.White;
             btnCopyToClipboard.Location = new Point(328, 12);
             btnCopyToClipboard.Name = "btnCopyToClipboard";
-            btnCopyToClipboard.Size = new Size(109, 278);
+            btnCopyToClipboard.Size = new Size(109, 311);
             btnCopyToClipboard.TabIndex = 4;
             btnCopyToClipboard.Text = "Create Clipboard Batch File";
             btnCopyToClipboard.UseVisualStyleBackColor = false;
@@ -100,9 +101,9 @@
             btnCreateExecutableBatch.FlatStyle = FlatStyle.Flat;
             btnCreateExecutableBatch.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold);
             btnCreateExecutableBatch.ForeColor = Color.White;
-            btnCreateExecutableBatch.Location = new Point(328, 291);
+            btnCreateExecutableBatch.Location = new Point(328, 331);
             btnCreateExecutableBatch.Name = "btnCreateExecutableBatch";
-            btnCreateExecutableBatch.Size = new Size(109, 278);
+            btnCreateExecutableBatch.Size = new Size(109, 311);
             btnCreateExecutableBatch.TabIndex = 6;
             btnCreateExecutableBatch.Text = "Create Executable Batch File";
             btnCreateExecutableBatch.UseVisualStyleBackColor = false;
@@ -115,7 +116,7 @@
             btnReset.FlatStyle = FlatStyle.Flat;
             btnReset.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold);
             btnReset.ForeColor = Color.White;
-            btnReset.Location = new Point(12, 523);
+            btnReset.Location = new Point(12, 586);
             btnReset.Name = "btnReset";
             btnReset.Size = new Size(310, 28);
             btnReset.TabIndex = 7;
@@ -145,7 +146,7 @@
             btnAddFolderDelete.FlatStyle = FlatStyle.Flat;
             btnAddFolderDelete.Font = new Font("Segoe UI", 9.75F);
             btnAddFolderDelete.ForeColor = Color.White;
-            btnAddFolderDelete.Location = new Point(12, 454);
+            btnAddFolderDelete.Location = new Point(12, 502);
             btnAddFolderDelete.Name = "btnAddFolderDelete";
             btnAddFolderDelete.Size = new Size(310, 28);
             btnAddFolderDelete.TabIndex = 9;
@@ -160,7 +161,7 @@
             btnAddTaskKill.FlatStyle = FlatStyle.Flat;
             btnAddTaskKill.Font = new Font("Segoe UI", 9.75F);
             btnAddTaskKill.ForeColor = Color.White;
-            btnAddTaskKill.Location = new Point(12, 477);
+            btnAddTaskKill.Location = new Point(12, 530);
             btnAddTaskKill.Name = "btnAddTaskKill";
             btnAddTaskKill.Size = new Size(310, 28);
             btnAddTaskKill.TabIndex = 10;
@@ -175,7 +176,7 @@
             btnAddDeleteSpecificFile.FlatStyle = FlatStyle.Flat;
             btnAddDeleteSpecificFile.Font = new Font("Segoe UI", 9.75F);
             btnAddDeleteSpecificFile.ForeColor = Color.White;
-            btnAddDeleteSpecificFile.Location = new Point(12, 385);
+            btnAddDeleteSpecificFile.Location = new Point(12, 418);
             btnAddDeleteSpecificFile.Name = "btnAddDeleteSpecificFile";
             btnAddDeleteSpecificFile.Size = new Size(310, 28);
             btnAddDeleteSpecificFile.TabIndex = 11;
@@ -190,7 +191,7 @@
             btnAddDeleteAllFilesinFolder.FlatStyle = FlatStyle.Flat;
             btnAddDeleteAllFilesinFolder.Font = new Font("Segoe UI", 9.75F);
             btnAddDeleteAllFilesinFolder.ForeColor = Color.White;
-            btnAddDeleteAllFilesinFolder.Location = new Point(12, 408);
+            btnAddDeleteAllFilesinFolder.Location = new Point(12, 446);
             btnAddDeleteAllFilesinFolder.Name = "btnAddDeleteAllFilesinFolder";
             btnAddDeleteAllFilesinFolder.Size = new Size(310, 28);
             btnAddDeleteAllFilesinFolder.TabIndex = 12;
@@ -205,7 +206,7 @@
             btnAddWaitTime.FlatStyle = FlatStyle.Flat;
             btnAddWaitTime.Font = new Font("Segoe UI", 9.75F);
             btnAddWaitTime.ForeColor = Color.White;
-            btnAddWaitTime.Location = new Point(12, 500);
+            btnAddWaitTime.Location = new Point(12, 558);
             btnAddWaitTime.Name = "btnAddWaitTime";
             btnAddWaitTime.Size = new Size(310, 28);
             btnAddWaitTime.TabIndex = 13;
@@ -220,7 +221,7 @@
             btnExitApplication.FlatStyle = FlatStyle.Flat;
             btnExitApplication.Font = new Font("Segoe UI", 9.75F);
             btnExitApplication.ForeColor = Color.White;
-            btnExitApplication.Location = new Point(12, 546);
+            btnExitApplication.Location = new Point(12, 614);
             btnExitApplication.Name = "btnExitApplication";
             btnExitApplication.Size = new Size(310, 28);
             btnExitApplication.TabIndex = 14;
@@ -235,7 +236,7 @@
             btnAddCreateFolder.FlatStyle = FlatStyle.Flat;
             btnAddCreateFolder.Font = new Font("Segoe UI", 9.75F);
             btnAddCreateFolder.ForeColor = Color.White;
-            btnAddCreateFolder.Location = new Point(12, 431);
+            btnAddCreateFolder.Location = new Point(12, 474);
             btnAddCreateFolder.Name = "btnAddCreateFolder";
             btnAddCreateFolder.Size = new Size(310, 28);
             btnAddCreateFolder.TabIndex = 15;
@@ -243,12 +244,28 @@
             btnAddCreateFolder.UseVisualStyleBackColor = false;
             btnAddCreateFolder.Click += btnAddCreateFolder_Click;
             // 
+            // btnVersionControlCopy
+            // 
+            btnVersionControlCopy.BackColor = Color.FromArgb(63, 81, 181);
+            btnVersionControlCopy.FlatAppearance.BorderSize = 0;
+            btnVersionControlCopy.FlatStyle = FlatStyle.Flat;
+            btnVersionControlCopy.Font = new Font("Segoe UI", 9.75F);
+            btnVersionControlCopy.ForeColor = Color.White;
+            btnVersionControlCopy.Location = new Point(12, 390);
+            btnVersionControlCopy.Name = "btnVersionControlCopy";
+            btnVersionControlCopy.Size = new Size(310, 28);
+            btnVersionControlCopy.TabIndex = 16;
+            btnVersionControlCopy.Text = "Version Control Copy";
+            btnVersionControlCopy.UseVisualStyleBackColor = false;
+            btnVersionControlCopy.Click += btnVersionControlCopy_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(18, 18, 18);
-            ClientSize = new Size(444, 585);
+            ClientSize = new Size(444, 649);
+            Controls.Add(btnVersionControlCopy);
             Controls.Add(btnAddCreateFolder);
             Controls.Add(btnExitApplication);
             Controls.Add(btnAddWaitTime);
@@ -287,5 +304,6 @@
         private Button btnAddWaitTime;
         private Button btnExitApplication;
         private Button btnAddCreateFolder;
+        private Button btnVersionControlCopy;
     }
 }
