@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Media;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace BatchFileGenerator
 {
@@ -46,6 +47,65 @@ namespace BatchFileGenerator
             };
 
             toast.Show();
+        }
+
+        private string PromptForFile(string title)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Title = title;
+                ofd.Filter = "All Files (*.*)|*.*"; // Default filter to show all files
+                ofd.Multiselect = false;
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    return ofd.FileName;
+                }
+            }
+            return null; // User cancelled or closed the dialog
+        }
+
+        private string GenerateDeleteFileBatch(string filePath)
+        {
+            // /Q: Quiet mode, doesn't ask for confirmation.
+            return $@"@echo off
+
+:: WARNING: This command will DELETE the specified file.
+:: File Path: {filePath}
+
+del /q ""{filePath}""
+
+echo File deletion command executed.
+pause";
+        }
+
+        private string GenerateDeleteFilesInFolderBatch(string folderPath)
+        {
+            // /Q: Quiet mode, doesn't ask for confirmation.
+            // *.* to target all files in the directory.
+            return $@"@echo off
+
+:: WARNING: This command will DELETE ALL FILES in the specified folder.
+:: Folder Path: {folderPath}
+
+del /q ""{folderPath}\*.*""
+
+echo File deletion command executed.
+pause";
+        }
+
+        private string GenerateDeleteFolderTreeBatch(string folderPath)
+        {
+            // /S: Removes all directories and files in the specified directory in addition to the directory itself.
+            // /Q: Quiet mode, doesn't ask for confirmation to remove the directory tree.
+            return $@"@echo off
+
+:: WARNING: This command will DELETE THE FOLDER AND ALL ITS CONTENTS (files and subfolders).
+:: Folder Path: {folderPath}
+
+rmdir /s /q ""{folderPath}""
+
+echo Folder deletion command executed.
+pause";
         }
 
         private string GeneratePrioritySetterBatch(string processName, string priorityClass)
@@ -326,12 +386,38 @@ pause";
 
         private void btnAddDeleteSpecificFile_Click(object sender, EventArgs e)
         {
-            AddToRichTextBox(@"del /q ""C:\Users\YourName\Documents\file.txt""");
+            // 1. Prompt for File Path
+            string filePath = PromptForFile("Select the **Specific File** that should be deleted.");
+            if (string.IsNullOrEmpty(filePath))
+            {
+                ShowToast("Operation cancelled. File not selected.", 3000, false);
+                return;
+            }
+
+            // 2. Generate the Batch Code
+            string deleteFilePreset = GenerateDeleteFileBatch(filePath);
+
+            // 3. Input the generated code into the Rich Text Box
+            AddToRichTextBox(deleteFilePreset);
+            ShowToast("Delete Specific File Batch code generated with selected path.", 3000, true);
         }
 
         private void btnAddDeleteAllFilesinFolder_Click(object sender, EventArgs e)
         {
-            AddToRichTextBox(@"del /q ""C:\Users\YourName\Documents\*.*""");
+            // 1. Prompt for Folder Path
+            string folderPath = PromptForPath("Select the **Folder** from which **all files** should be deleted.");
+            if (string.IsNullOrEmpty(folderPath))
+            {
+                ShowToast("Operation cancelled. Folder not selected.", 3000, false);
+                return;
+            }
+
+            // 2. Generate the Batch Code
+            string deleteAllFilesPreset = GenerateDeleteFilesInFolderBatch(folderPath);
+
+            // 3. Input the generated code into the Rich Text Box
+            AddToRichTextBox(deleteAllFilesPreset);
+            ShowToast("Delete All Files Batch code generated with selected path.", 3000, true);
         }
 
         private void btnAddCreateFolder_Click(object sender, EventArgs e)
@@ -341,7 +427,20 @@ pause";
 
         private void btnAddFolderDelete_Click(object sender, EventArgs e)
         {
-            AddToRichTextBox(@"rmdir /s /q ""C:\Path\to\Directory""");
+            // 1. Prompt for Folder Path
+            string folderPath = PromptForPath("Select the **Folder** that should be deleted completely (including all contents).");
+            if (string.IsNullOrEmpty(folderPath))
+            {
+                ShowToast("Operation cancelled. Folder not selected.", 3000, false);
+                return;
+            }
+
+            // 2. Generate the Batch Code
+            string deleteFolderPreset = GenerateDeleteFolderTreeBatch(folderPath);
+
+            // 3. Input the generated code into the Rich Text Box
+            AddToRichTextBox(deleteFolderPreset);
+            ShowToast("Delete Folder Batch code generated with selected path.", 3000, true);
         }
 
         private void btnAddTaskKill_Click(object sender, EventArgs e)
