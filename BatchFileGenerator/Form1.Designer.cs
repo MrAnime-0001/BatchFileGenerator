@@ -43,6 +43,7 @@
             btnExitApplication = new Button();
             btnAddCreateFolder = new Button();
             btnVersionControlCopy = new Button();
+            btnSetApplicationPriority = new Button();
             SuspendLayout();
             // 
             // lblFileName
@@ -76,7 +77,7 @@
             btnCopyToClipboard.ForeColor = Color.White;
             btnCopyToClipboard.Location = new Point(328, 12);
             btnCopyToClipboard.Name = "btnCopyToClipboard";
-            btnCopyToClipboard.Size = new Size(109, 311);
+            btnCopyToClipboard.Size = new Size(109, 321);
             btnCopyToClipboard.TabIndex = 4;
             btnCopyToClipboard.Text = "Create Clipboard Batch File";
             btnCopyToClipboard.UseVisualStyleBackColor = false;
@@ -101,9 +102,9 @@
             btnCreateExecutableBatch.FlatStyle = FlatStyle.Flat;
             btnCreateExecutableBatch.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold);
             btnCreateExecutableBatch.ForeColor = Color.White;
-            btnCreateExecutableBatch.Location = new Point(328, 331);
+            btnCreateExecutableBatch.Location = new Point(328, 349);
             btnCreateExecutableBatch.Name = "btnCreateExecutableBatch";
-            btnCreateExecutableBatch.Size = new Size(109, 311);
+            btnCreateExecutableBatch.Size = new Size(109, 321);
             btnCreateExecutableBatch.TabIndex = 6;
             btnCreateExecutableBatch.Text = "Create Executable Batch File";
             btnCreateExecutableBatch.UseVisualStyleBackColor = false;
@@ -116,7 +117,7 @@
             btnReset.FlatStyle = FlatStyle.Flat;
             btnReset.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold);
             btnReset.ForeColor = Color.White;
-            btnReset.Location = new Point(12, 586);
+            btnReset.Location = new Point(12, 614);
             btnReset.Name = "btnReset";
             btnReset.Size = new Size(310, 28);
             btnReset.TabIndex = 7;
@@ -221,7 +222,7 @@
             btnExitApplication.FlatStyle = FlatStyle.Flat;
             btnExitApplication.Font = new Font("Segoe UI", 9.75F);
             btnExitApplication.ForeColor = Color.White;
-            btnExitApplication.Location = new Point(12, 614);
+            btnExitApplication.Location = new Point(12, 642);
             btnExitApplication.Name = "btnExitApplication";
             btnExitApplication.Size = new Size(310, 28);
             btnExitApplication.TabIndex = 14;
@@ -259,12 +260,28 @@
             btnVersionControlCopy.UseVisualStyleBackColor = false;
             btnVersionControlCopy.Click += btnVersionControlCopy_Click;
             // 
+            // btnSetApplicationPriority
+            // 
+            btnSetApplicationPriority.BackColor = Color.FromArgb(63, 81, 181);
+            btnSetApplicationPriority.FlatAppearance.BorderSize = 0;
+            btnSetApplicationPriority.FlatStyle = FlatStyle.Flat;
+            btnSetApplicationPriority.Font = new Font("Segoe UI", 9.75F);
+            btnSetApplicationPriority.ForeColor = Color.White;
+            btnSetApplicationPriority.Location = new Point(12, 586);
+            btnSetApplicationPriority.Name = "btnSetApplicationPriority";
+            btnSetApplicationPriority.Size = new Size(310, 28);
+            btnSetApplicationPriority.TabIndex = 17;
+            btnSetApplicationPriority.Text = "Set Application Priority";
+            btnSetApplicationPriority.UseVisualStyleBackColor = false;
+            btnSetApplicationPriority.Click += btnSetApplicationPriority_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(18, 18, 18);
-            ClientSize = new Size(444, 649);
+            ClientSize = new Size(444, 675);
+            Controls.Add(btnSetApplicationPriority);
             Controls.Add(btnVersionControlCopy);
             Controls.Add(btnAddCreateFolder);
             Controls.Add(btnExitApplication);
@@ -305,5 +322,6 @@
         private Button btnExitApplication;
         private Button btnAddCreateFolder;
         private Button btnVersionControlCopy;
+        private Button btnSetApplicationPriority;
     }
 }

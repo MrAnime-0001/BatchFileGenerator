@@ -48,6 +48,27 @@ namespace BatchFileGenerator
             toast.Show();
         }
 
+        private string GeneratePrioritySetterBatch(string processName, string priorityClass)
+        {
+            // The PowerShell command to set process priority
+            string powershellCommand = $@"powershell -Command ""& {{Get-Process '{processName}' | ForEach-Object {{ $_.PriorityClass = '{priorityClass}' }}}}""";
+
+            // Batch file template to execute the PowerShell command
+            return $@"@echo off
+
+:: IMPORTANT: Running this command requires the batch file itself to be run as Administrator
+:: to successfully change process priority.
+
+set ""PROCESS_NAME={processName}""
+set ""PRIORITY={priorityClass}""
+
+echo Attempting to set priority for %PROCESS_NAME% to %PRIORITY%...
+{powershellCommand}
+
+echo Priority setting command executed.
+pause";
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -343,6 +364,53 @@ pause";
         private void btnExitApplication_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void btnSetApplicationPriority_Click(object sender, EventArgs e)
+        {
+            // 1. Prompt for Process Name (e.g., "ScreenToGif", "chrome")
+            string processName = Microsoft.VisualBasic.Interaction.InputBox(
+                "Enter the **Process Name** (without .exe) to set priority for.\n\nE.g., **ScreenToGif**, **chrome**, **notepad**.",
+                "Set Application Priority - Process Name",
+                "ScreenToGif" // Default value
+            );
+
+            if (string.IsNullOrWhiteSpace(processName))
+            {
+                ShowToast("Operation cancelled. Process name not provided.", 3000, false);
+                return;
+            }
+
+            // Attempt to strip common extensions if the user included them
+            processName = processName.Replace(".exe", "").Replace(".com", "").Replace(".dll", "");
+
+            // 2. Prompt for Priority Class (Using a list of common options)
+            string promptExplanation = "Enter the **Priority Class** for the application:\n\n" +
+                                       "• **RealTime** (Highest, requires Admin)\n" +
+                                       "• **High** (Recommended for safety/critical apps)\n" +
+                                       "• **AboveNormal**\n" +
+                                       "• **Normal** (Default)\n" +
+                                       "• **BelowNormal**\n" +
+                                       "• **Idle** (Lowest)";
+
+            string priorityClass = Microsoft.VisualBasic.Interaction.InputBox(
+                promptExplanation,
+                "Set Application Priority - Priority Class",
+                "High" // Recommended starting priority
+            );
+
+            if (string.IsNullOrWhiteSpace(priorityClass))
+            {
+                ShowToast("Operation cancelled. Priority class not provided.", 3000, false);
+                return;
+            }
+
+            // 3. Generate the Batch Code
+            string priorityBatchPreset = GeneratePrioritySetterBatch(processName, priorityClass);
+
+            // 4. Input the generated code into the Rich Text Box
+            AddToRichTextBox(priorityBatchPreset);
+            ShowToast("Priority Setting Batch code generated. Remember to run the batch file as Administrator!", 4000, true);
         }
     }
 }
