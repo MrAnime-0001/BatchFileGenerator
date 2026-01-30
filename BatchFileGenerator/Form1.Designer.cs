@@ -44,6 +44,7 @@
             btnAddCreateFolder = new Button();
             btnVersionControlCopy = new Button();
             btnSetApplicationPriority = new Button();
+            btnAddStartApplication = new Button();
             SuspendLayout();
             // 
             // lblFileName
@@ -77,7 +78,7 @@
             btnCopyToClipboard.ForeColor = Color.White;
             btnCopyToClipboard.Location = new Point(328, 12);
             btnCopyToClipboard.Name = "btnCopyToClipboard";
-            btnCopyToClipboard.Size = new Size(109, 321);
+            btnCopyToClipboard.Size = new Size(109, 331);
             btnCopyToClipboard.TabIndex = 4;
             btnCopyToClipboard.Text = "Create Clipboard Batch File";
             btnCopyToClipboard.UseVisualStyleBackColor = false;
@@ -102,9 +103,9 @@
             btnCreateExecutableBatch.FlatStyle = FlatStyle.Flat;
             btnCreateExecutableBatch.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold);
             btnCreateExecutableBatch.ForeColor = Color.White;
-            btnCreateExecutableBatch.Location = new Point(328, 349);
+            btnCreateExecutableBatch.Location = new Point(328, 367);
             btnCreateExecutableBatch.Name = "btnCreateExecutableBatch";
-            btnCreateExecutableBatch.Size = new Size(109, 321);
+            btnCreateExecutableBatch.Size = new Size(109, 331);
             btnCreateExecutableBatch.TabIndex = 6;
             btnCreateExecutableBatch.Text = "Create Executable Batch File";
             btnCreateExecutableBatch.UseVisualStyleBackColor = false;
@@ -117,7 +118,7 @@
             btnReset.FlatStyle = FlatStyle.Flat;
             btnReset.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold);
             btnReset.ForeColor = Color.White;
-            btnReset.Location = new Point(12, 614);
+            btnReset.Location = new Point(12, 642);
             btnReset.Name = "btnReset";
             btnReset.Size = new Size(310, 28);
             btnReset.TabIndex = 7;
@@ -162,7 +163,7 @@
             btnAddTaskKill.FlatStyle = FlatStyle.Flat;
             btnAddTaskKill.Font = new Font("Segoe UI", 9.75F);
             btnAddTaskKill.ForeColor = Color.White;
-            btnAddTaskKill.Location = new Point(12, 530);
+            btnAddTaskKill.Location = new Point(12, 558);
             btnAddTaskKill.Name = "btnAddTaskKill";
             btnAddTaskKill.Size = new Size(310, 28);
             btnAddTaskKill.TabIndex = 10;
@@ -207,7 +208,7 @@
             btnAddWaitTime.FlatStyle = FlatStyle.Flat;
             btnAddWaitTime.Font = new Font("Segoe UI", 9.75F);
             btnAddWaitTime.ForeColor = Color.White;
-            btnAddWaitTime.Location = new Point(12, 558);
+            btnAddWaitTime.Location = new Point(12, 586);
             btnAddWaitTime.Name = "btnAddWaitTime";
             btnAddWaitTime.Size = new Size(310, 28);
             btnAddWaitTime.TabIndex = 13;
@@ -222,7 +223,7 @@
             btnExitApplication.FlatStyle = FlatStyle.Flat;
             btnExitApplication.Font = new Font("Segoe UI", 9.75F);
             btnExitApplication.ForeColor = Color.White;
-            btnExitApplication.Location = new Point(12, 642);
+            btnExitApplication.Location = new Point(12, 670);
             btnExitApplication.Name = "btnExitApplication";
             btnExitApplication.Size = new Size(310, 28);
             btnExitApplication.TabIndex = 14;
@@ -267,7 +268,7 @@
             btnSetApplicationPriority.FlatStyle = FlatStyle.Flat;
             btnSetApplicationPriority.Font = new Font("Segoe UI", 9.75F);
             btnSetApplicationPriority.ForeColor = Color.White;
-            btnSetApplicationPriority.Location = new Point(12, 586);
+            btnSetApplicationPriority.Location = new Point(12, 614);
             btnSetApplicationPriority.Name = "btnSetApplicationPriority";
             btnSetApplicationPriority.Size = new Size(310, 28);
             btnSetApplicationPriority.TabIndex = 17;
@@ -275,12 +276,28 @@
             btnSetApplicationPriority.UseVisualStyleBackColor = false;
             btnSetApplicationPriority.Click += btnSetApplicationPriority_Click;
             // 
+            // btnAddStartApplication
+            // 
+            btnAddStartApplication.BackColor = Color.FromArgb(63, 81, 181);
+            btnAddStartApplication.FlatAppearance.BorderSize = 0;
+            btnAddStartApplication.FlatStyle = FlatStyle.Flat;
+            btnAddStartApplication.Font = new Font("Segoe UI", 9.75F);
+            btnAddStartApplication.ForeColor = Color.White;
+            btnAddStartApplication.Location = new Point(12, 530);
+            btnAddStartApplication.Name = "btnAddStartApplication";
+            btnAddStartApplication.Size = new Size(310, 28);
+            btnAddStartApplication.TabIndex = 18;
+            btnAddStartApplication.Text = "Add Start Application";
+            btnAddStartApplication.UseVisualStyleBackColor = false;
+            btnAddStartApplication.Click += btnAddStartApplication_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(18, 18, 18);
-            ClientSize = new Size(444, 675);
+            ClientSize = new Size(443, 703);
+            Controls.Add(btnAddStartApplication);
             Controls.Add(btnSetApplicationPriority);
             Controls.Add(btnVersionControlCopy);
             Controls.Add(btnAddCreateFolder);
@@ -323,5 +340,6 @@
         private Button btnAddCreateFolder;
         private Button btnVersionControlCopy;
         private Button btnSetApplicationPriority;
+        private Button btnAddStartApplication;
     }
 }

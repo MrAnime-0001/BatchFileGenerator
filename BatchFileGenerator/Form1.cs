@@ -443,6 +443,26 @@ pause";
             ShowToast("Delete Folder Batch code generated with selected path.", 3000, true);
         }
 
+        private void btnAddStartApplication_Click(object sender, EventArgs e)
+        {
+            // 1. Prompt for the application or file path
+            string filePath = PromptForFile("Select the **Application** or **File** you want to start.");
+
+            if (string.IsNullOrEmpty(filePath))
+            {
+                ShowToast("Operation cancelled. No file selected.", 3000, false);
+                return;
+            }
+
+            // 2. Generate the command
+            // We use "" as the first argument because 'start' treats the first set of quotes as a window title.
+            string startCommand = $@"start """" ""{filePath}""";
+
+            // 3. Input the generated code into the Rich Text Box
+            AddToRichTextBox(startCommand);
+            ShowToast("Start Application command generated with selected path.", 3000, true);
+        }
+
         private void btnAddTaskKill_Click(object sender, EventArgs e)
         {
             AddToRichTextBox(@"taskkill /F /IM ""application name""");
