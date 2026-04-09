@@ -9,6 +9,15 @@ namespace BatchFileGenerator
 {
     public partial class Form1 : Form
     {
+        private string GetFileExtension()
+        {
+            string extension = txtFileExtension.Text.Trim();
+            if (string.IsNullOrWhiteSpace(extension))
+                extension = ".bat";
+            if (!extension.StartsWith("."))
+                extension = "." + extension;
+            return extension;
+        }
 
         public static void ShowToast(string message, int duration = 2000, bool playSound = true)
         {
@@ -132,6 +141,7 @@ pause";
         public Form1()
         {
             InitializeComponent();
+            txtFileExtension.Text = "bat";
         }
 
         private void btnCopyToClipboard_Click(object sender, EventArgs e)
@@ -157,10 +167,9 @@ pause";
                 return;
             }
 
-            if (!fileName.EndsWith(".bat", StringComparison.OrdinalIgnoreCase))
-            {
-                fileName += ".bat";
-            }
+            string extension = GetFileExtension();
+            if (!fileName.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
+                fileName += extension;
 
             string batchContent = @$"@echo off
 
@@ -192,10 +201,9 @@ echo|set /p=""{textToCopy}"" | clip";
                 return;
             }
 
-            if (!fileName.EndsWith(".bat", StringComparison.OrdinalIgnoreCase))
-            {
-                fileName += ".bat";
-            }
+            string extension = GetFileExtension();
+            if (!fileName.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
+                fileName += extension;
 
             SaveBatchFile(fileName, batchContent);
         }
@@ -211,6 +219,7 @@ echo|set /p=""{textToCopy}"" | clip";
                 ShowToast($"✅ Batch file created successfully at:\n{batchFilePath}", 4000, true);
                 rtbTextToCopy.Clear();
                 txtFileName.Clear();
+                txtFileExtension.Text = "bat";
                 btnCopyToClipboard.Enabled = true;
                 btnCopyToClipboard.ForeColor = Color.Black;
             }
@@ -476,6 +485,7 @@ pause";
         private void btnReset_Click(object sender, EventArgs e)
         {
             rtbTextToCopy.Clear();
+            txtFileExtension.Text = "bat";
             btnCopyToClipboard.Enabled = true;
             btnCopyToClipboard.ForeColor = Color.Black;
         }
