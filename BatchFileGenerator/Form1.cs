@@ -1,291 +1,108 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.IO;
-using System.Media;
 using System.Windows.Forms;
-using System.Threading.Tasks;
 
 namespace BatchFileGenerator
 {
     public partial class Form1 : Form
     {
-        private string GetFileExtension()
-        {
-            string extension = txtFileExtension.Text.Trim();
-            if (string.IsNullOrWhiteSpace(extension))
-                extension = ".bat";
-            if (!extension.StartsWith("."))
-                extension = "." + extension;
-            return extension;
-        }
-
-        public static void ShowToast(string message, int duration = 2000, bool playSound = true)
-        {
-            Form toast = new Form
-            {
-                FormBorderStyle = FormBorderStyle.None,
-                StartPosition = FormStartPosition.Manual,
-                ShowInTaskbar = false,
-                TopMost = true,
-                BackColor = Color.FromArgb(45, 45, 48),
-                Size = new Size(250, 60),
-                Opacity = 0.9
-            };
-
-            toast.Controls.Add(new Label
-            {
-                Text = message,
-                Dock = DockStyle.Fill,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                ForeColor = Color.White
-            });
-
-            var screen = Screen.PrimaryScreen.WorkingArea;
-            toast.Location = new Point(screen.Right - toast.Width - 10, screen.Bottom - toast.Height - 10);
-
-            toast.Shown += async (s, e) =>
-            {
-                if (playSound)
-                {
-                    SystemSounds.Exclamation.Play(); // Default Windows notification sound
-                }
-
-                await Task.Delay(duration);
-                toast.Close();
-            };
-
-            toast.Show();
-        }
-
-        private string PromptForFile(string title)
-        {
-            using (OpenFileDialog ofd = new OpenFileDialog())
-            {
-                ofd.Title = title;
-                ofd.Filter = "All Files (*.*)|*.*"; // Default filter to show all files
-                ofd.Multiselect = false;
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    return ofd.FileName;
-                }
-            }
-            return null; // User cancelled or closed the dialog
-        }
-
-        private string GenerateDeleteFileBatch(string filePath)
-        {
-            // /Q: Quiet mode, doesn't ask for confirmation.
-            return $@"@echo off
-
-:: WARNING: This command will DELETE the specified file.
-:: File Path: {filePath}
-
-del /q ""{filePath}""
-
-echo File deletion command executed.
-pause";
-        }
-
-        private string GenerateDeleteFilesInFolderBatch(string folderPath)
-        {
-            // /Q: Quiet mode, doesn't ask for confirmation.
-            // *.* to target all files in the directory.
-            return $@"@echo off
-
-:: WARNING: This command will DELETE ALL FILES in the specified folder.
-:: Folder Path: {folderPath}
-
-del /q ""{folderPath}\*.*""
-
-echo File deletion command executed.
-pause";
-        }
-
-        private string GenerateDeleteFolderTreeBatch(string folderPath)
-        {
-            // /S: Removes all directories and files in the specified directory in addition to the directory itself.
-            // /Q: Quiet mode, doesn't ask for confirmation to remove the directory tree.
-            return $@"@echo off
-
-:: WARNING: This command will DELETE THE FOLDER AND ALL ITS CONTENTS (files and subfolders).
-:: Folder Path: {folderPath}
-
-rmdir /s /q ""{folderPath}""
-
-echo Folder deletion command executed.
-pause";
-        }
-
-        private string GeneratePrioritySetterBatch(string processName, string priorityClass)
-        {
-            // The PowerShell command to set process priority
-            string powershellCommand = $@"powershell -Command ""& {{Get-Process '{processName}' | ForEach-Object {{ $_.PriorityClass = '{priorityClass}' }}}}""";
-
-            // Batch file template to execute the PowerShell command
-            return $@"@echo off
-
-:: IMPORTANT: Running this command requires the batch file itself to be run as Administrator
-:: to successfully change process priority.
-
-set ""PROCESS_NAME={processName}""
-set ""PRIORITY={priorityClass}""
-
-echo Attempting to set priority for %PROCESS_NAME% to %PRIORITY%...
-{powershellCommand}
-
-echo Priority setting command executed.
-pause";
-        }
-
         public Form1()
         {
             InitializeComponent();
             txtFileExtension.Text = "bat";
         }
 
-        private void btnCopyToClipboard_Click(object sender, EventArgs e)
+        private void btnActionCreateClipboard_Click(object sender, EventArgs e)
         {
-            string textToCopy = rtbTextToCopy.Text;
+            string textToCopy = rtbBatchContent.Text;
             string fileName = txtFileName.Text;
 
             if (string.IsNullOrWhiteSpace(textToCopy))
             {
-                ShowToast("⚠️ Please enter text to copy to the clipboard.", 3000, false);
+                UIHelper.ShowToast("⚠️ Please enter text to copy to the clipboard.", 3000, false);
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(fileName))
+            if (!FileOperations.IsValidFileName(fileName))
             {
-                ShowToast("⚠️ Please enter a file name for the batch file.", 3000, false);
+                UIHelper.ShowToast("⚠️ Please enter a valid file name.", 3000, false);
                 return;
             }
 
-            if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
-            {
-                ShowToast("⚠️ File name contains invalid characters.", 3000, false);
-                return;
-            }
-
-            string extension = GetFileExtension();
-            if (!fileName.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
-                fileName += extension;
-
-            string batchContent = @$"@echo off
-
-
-echo|set /p=""{textToCopy}"" | clip";
-            SaveBatchFile(fileName, batchContent);
+            fileName = FileOperations.GetFullFileName(fileName, txtFileExtension.Text);
+            string batchContent = BatchScriptGenerator.GenerateCopyToClipboardBatch(textToCopy);
+            
+            SaveAndNotify(fileName, batchContent);
         }
 
-        private void btnCreateExecutableBatch_Click(object sender, EventArgs e)
+        private void btnActionCreateFile_Click(object sender, EventArgs e)
         {
-            string batchContent = rtbTextToCopy.Text;
+            string batchContent = rtbBatchContent.Text;
             string fileName = txtFileName.Text;
 
             if (string.IsNullOrWhiteSpace(batchContent))
             {
-                ShowToast("⚠️ Please enter batch commands to execute.", 3000, false);
+                UIHelper.ShowToast("⚠️ Please enter batch commands to execute.", 3000, false);
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(fileName))
+            if (!FileOperations.IsValidFileName(fileName))
             {
-                ShowToast("⚠️ Please enter a file name for the batch file.", 3000, false);
+                UIHelper.ShowToast("⚠️ Please enter a valid file name.", 3000, false);
                 return;
             }
 
-            if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
-            {
-                ShowToast("⚠️ File name contains invalid characters.", 3000, false);
-                return;
-            }
-
-            string extension = GetFileExtension();
-            if (!fileName.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
-                fileName += extension;
-
-            SaveBatchFile(fileName, batchContent);
+            fileName = FileOperations.GetFullFileName(fileName, txtFileExtension.Text);
+            SaveAndNotify(fileName, batchContent);
         }
 
-        private void SaveBatchFile(string fileName, string content)
+        private void SaveAndNotify(string fileName, string content)
         {
-            string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string batchFilePath = Path.Combine(appDirectory, fileName);
-
             try
             {
-                File.WriteAllText(batchFilePath, content);
-                ShowToast($"✅ Batch file created successfully at:\n{batchFilePath}", 4000, true);
-                rtbTextToCopy.Clear();
+                string path = FileOperations.SaveBatchFile(fileName, content);
+                UIHelper.ShowToast($"✅ Batch file created successfully at:\n{path}", 4000, true);
+                
+                rtbBatchContent.Clear();
                 txtFileName.Clear();
                 txtFileExtension.Text = "bat";
-                btnCopyToClipboard.Enabled = true;
-                btnCopyToClipboard.ForeColor = Color.Black;
+                btnActionCreateClipboard.Enabled = true;
+                btnActionCreateClipboard.ForeColor = Color.White;
             }
             catch (Exception ex)
             {
-                ShowToast($"❌ An error occurred: {ex.Message}", 4000, false);
+                UIHelper.ShowToast($"❌ An error occurred: {ex.Message}", 4000, false);
             }
         }
 
         private void AddToRichTextBox(string text)
         {
-            if (!string.IsNullOrWhiteSpace(rtbTextToCopy.Text))
+            if (!string.IsNullOrWhiteSpace(rtbBatchContent.Text))
             {
-                if (!rtbTextToCopy.Text.StartsWith("@echo off"))
+                if (!rtbBatchContent.Text.StartsWith("@echo off"))
                 {
-                    rtbTextToCopy.Text = "@echo off\n\n" + rtbTextToCopy.Text;
+                    rtbBatchContent.Text = "@echo off\n\n" + rtbBatchContent.Text;
                 }
-                rtbTextToCopy.AppendText("\n\n" + text);
+                rtbBatchContent.AppendText("\n\n" + text);
             }
             else
             {
-                rtbTextToCopy.Text = "@echo off\n\n" + text;
+                rtbBatchContent.Text = "@echo off\n\n" + text;
             }
 
-            btnCopyToClipboard.Enabled = false;
-            btnCopyToClipboard.ForeColor = Color.Gray;
+            btnActionCreateClipboard.Enabled = false;
+            btnActionCreateClipboard.ForeColor = Color.Gray;
         }
 
-        private string GenerateRoboCopyBatch(string sourcePath, string destinationPath, string fileMask)
+        private void btnLibRoboCopy_Click(object sender, EventArgs e)
         {
-            // /E: Copy subdirectories, including empty ones.
-            // /Z: Copy files in restartable mode (good for large files/unstable networks).
-            // /R:3: Retry 3 times on failed copies.
-            // /W:5: Wait 5 seconds between retries.
-            // /NDL /NJH /NJS: Suppress log output to reduce console spam, making it cleaner.
-            return $@"@echo off
+            string? sourcePath = UIHelper.PromptForPath("Select the **Source Folder** for RoboCopy.");
+            if (string.IsNullOrEmpty(sourcePath)) return;
 
-:: Source: {sourcePath}
-:: Destination: {destinationPath}
-:: File/Mask: {fileMask}
+            string? destinationPath = UIHelper.PromptForPath("Select the **Destination Folder** for RoboCopy.");
+            if (string.IsNullOrEmpty(destinationPath)) return;
 
-robocopy ""{sourcePath}"" ""{destinationPath}"" ""{fileMask}"" /E /Z /R:3 /W:5 /NDL /NJH /NJS
-
-echo RoboCopy operation completed or attempted.
-pause";
-        }
-
-        private void btnAddRoboCopy_Click(object sender, EventArgs e)
-        {
-            // 1. Prompt for Source Path
-            string sourcePath = PromptForPath("Select the **Source Folder** for RoboCopy.");
-            if (string.IsNullOrEmpty(sourcePath))
-            {
-                ShowToast("Operation cancelled. Source folder not selected.", 3000, false);
-                return;
-            }
-
-            // 2. Prompt for Destination Path
-            string destinationPath = PromptForPath("Select the **Destination Folder** for RoboCopy.");
-            if (string.IsNullOrEmpty(destinationPath))
-            {
-                ShowToast("Operation cancelled. Destination folder not selected.", 3000, false);
-                return;
-            }
-
-            // 3. Prompt for the specific File/Folder name with the CLEARER explanation and E.G.s
             string promptExplanation = "Enter the **File Name** or **File Mask** to be copied.\n\n" +
                                        "**REMINDER: The asterisk (*) is the wildcard for 'all'.**\n\n" +
                                        "• Use ***.* for all files**.\n" +
@@ -293,253 +110,106 @@ pause";
                                        "• Use **a specific file name** (e.g., **important.docx**).\n" +
                                        "• Use **a sub-folder name** (e.g., **Archive** to copy that folder and its contents).";
 
-            string fileMask = Microsoft.VisualBasic.Interaction.InputBox(
-                promptExplanation, // Updated Prompt String with specific E.G.s
-                "RoboCopy File/Mask Input",
-                "*.*"
-            );
+            string fileMask = Microsoft.VisualBasic.Interaction.InputBox(promptExplanation, "RoboCopy File/Mask Input", "*.*");
+            if (string.IsNullOrEmpty(fileMask)) fileMask = "*.*";
 
-            // If the user cancelled the InputBox or entered nothing, we can default to *.* (all files)
-            if (string.IsNullOrEmpty(fileMask))
-            {
-                fileMask = "*.*";
-            }
-
-            // 4. Generate the Batch Code
-            string robocopyBatchPreset = GenerateRoboCopyBatch(sourcePath, destinationPath, fileMask);
-
-            // 5. Input the generated code into the Rich Text Box
-            AddToRichTextBox(robocopyBatchPreset);
-            ShowToast("RoboCopy Batch code generated with selected paths.", 3000, true);
+            string robocopyBatch = BatchScriptGenerator.GenerateRoboCopyBatch(sourcePath, destinationPath, fileMask);
+            AddToRichTextBox(robocopyBatch);
+            UIHelper.ShowToast("RoboCopy Batch code generated.", 3000, true);
         }
 
-        private string GenerateVersionControlBatch(string sourcePath, string destinationPath)
+        private void btnLibVersionControl_Click(object sender, EventArgs e)
         {
-            // The batch logic for finding the next version number (v1, v2, etc.) remains the same.
-            // The paths are dynamically inserted into the batch content using string interpolation ($).
-            return $@"@echo off
-setlocal
+            string? sourcePath = UIHelper.PromptForPath("Select the **Source Folder** to be version controlled.");
+            if (string.IsNullOrEmpty(sourcePath)) return;
 
-:: Set the source and destination directories
-set ""source_folder={sourcePath}""
-set ""destination_folder={destinationPath}""
+            string? destinationPath = UIHelper.PromptForPath("Select the **Destination Folder** for version copies.");
+            if (string.IsNullOrEmpty(destinationPath)) return;
 
-:: Set the optional base name for the copied folder
-:: Leave empty to use default naming with ""v1"", ""v2"", etc.
-set ""SetName=Copy""
-
-:: Initialize the copy counter
-set ""count=1""
-
-:: Check for existing copies and find the next available number
-:check_existing
-if defined SetName (
-    set ""folder_name=%SetName% v%count%""
-) else (
-    set ""folder_name=v%count%""
-)
-
-if exist ""%destination_folder%\%folder_name%"" (
-    set /a count+=1
-    goto :check_existing
-)
-
-:: Copy the folder and rename it with the incremented count
-xcopy ""%source_folder%"" ""%destination_folder%\%folder_name%"" /E /I
-
-echo Folder copied to ""%destination_folder%\%folder_name%""
-
-endlocal
-pause";
+            string versionControlBatch = BatchScriptGenerator.GenerateVersionControlBatch(sourcePath, destinationPath);
+            AddToRichTextBox(versionControlBatch);
+            UIHelper.ShowToast("Version Control Batch code generated.", 3000, true);
         }
 
-        private string PromptForPath(string title)
+        private void btnLibDeleteFile_Click(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog fbd = new FolderBrowserDialog())
-            {
-                fbd.Description = title;
-                fbd.ShowNewFolderButton = true;
-                if (fbd.ShowDialog() == DialogResult.OK)
-                {
-                    return fbd.SelectedPath;
-                }
-            }
-            return null; // User cancelled or closed the dialog
+            string? filePath = UIHelper.PromptForFile("Select the **Specific File** that should be deleted.");
+            if (string.IsNullOrEmpty(filePath)) return;
+
+            string deleteFileBatch = BatchScriptGenerator.GenerateDeleteFileBatch(filePath);
+            AddToRichTextBox(deleteFileBatch);
+            UIHelper.ShowToast("Delete Specific File Batch code generated.", 3000, true);
         }
 
-        private void btnVersionControlCopy_Click(object sender, EventArgs e)
+        private void btnLibDeleteFolderFiles_Click(object sender, EventArgs e)
         {
-            // 1. Prompt for Source Path
-            string sourcePath = PromptForPath("Select the **Source Folder** to be version controlled (copied).");
-            if (string.IsNullOrEmpty(sourcePath))
-            {
-                ShowToast("Operation cancelled. Source folder not selected.", 3000, false);
-                return;
-            }
+            string? folderPath = UIHelper.PromptForPath("Select the **Folder** from which **all files** should be deleted.");
+            if (string.IsNullOrEmpty(folderPath)) return;
 
-            // 2. Prompt for Destination Path
-            string destinationPath = PromptForPath("Select the **Destination Folder** where version copies will be saved.");
-            if (string.IsNullOrEmpty(destinationPath))
-            {
-                ShowToast("Operation cancelled. Destination folder not selected.", 3000, false);
-                return;
-            }
-
-            // 3. Generate the Batch Code using the selected paths
-            string versionControlCopyPreset = GenerateVersionControlBatch(sourcePath, destinationPath);
-
-            // 4. Input the generated code into the Rich Text Box
-            AddToRichTextBox(versionControlCopyPreset);
-            ShowToast("Version Control Batch code generated with selected paths.", 3000, true);
+            string deleteAllFilesBatch = BatchScriptGenerator.GenerateDeleteFilesInFolderBatch(folderPath);
+            AddToRichTextBox(deleteAllFilesBatch);
+            UIHelper.ShowToast("Delete All Files Batch code generated.", 3000, true);
         }
 
-        private void btnAddDeleteSpecificFile_Click(object sender, EventArgs e)
-        {
-            // 1. Prompt for File Path
-            string filePath = PromptForFile("Select the **Specific File** that should be deleted.");
-            if (string.IsNullOrEmpty(filePath))
-            {
-                ShowToast("Operation cancelled. File not selected.", 3000, false);
-                return;
-            }
-
-            // 2. Generate the Batch Code
-            string deleteFilePreset = GenerateDeleteFileBatch(filePath);
-
-            // 3. Input the generated code into the Rich Text Box
-            AddToRichTextBox(deleteFilePreset);
-            ShowToast("Delete Specific File Batch code generated with selected path.", 3000, true);
-        }
-
-        private void btnAddDeleteAllFilesinFolder_Click(object sender, EventArgs e)
-        {
-            // 1. Prompt for Folder Path
-            string folderPath = PromptForPath("Select the **Folder** from which **all files** should be deleted.");
-            if (string.IsNullOrEmpty(folderPath))
-            {
-                ShowToast("Operation cancelled. Folder not selected.", 3000, false);
-                return;
-            }
-
-            // 2. Generate the Batch Code
-            string deleteAllFilesPreset = GenerateDeleteFilesInFolderBatch(folderPath);
-
-            // 3. Input the generated code into the Rich Text Box
-            AddToRichTextBox(deleteAllFilesPreset);
-            ShowToast("Delete All Files Batch code generated with selected path.", 3000, true);
-        }
-
-        private void btnAddCreateFolder_Click(object sender, EventArgs e)
+        private void btnLibCreateFolder_Click(object sender, EventArgs e)
         {
             AddToRichTextBox(@"mkdir ""C:\Path\To\NewFolder""");
         }
 
-        private void btnAddFolderDelete_Click(object sender, EventArgs e)
+        private void btnLibDeleteFolder_Click(object sender, EventArgs e)
         {
-            // 1. Prompt for Folder Path
-            string folderPath = PromptForPath("Select the **Folder** that should be deleted completely (including all contents).");
-            if (string.IsNullOrEmpty(folderPath))
-            {
-                ShowToast("Operation cancelled. Folder not selected.", 3000, false);
-                return;
-            }
+            string? folderPath = UIHelper.PromptForPath("Select the **Folder** that should be deleted completely.");
+            if (string.IsNullOrEmpty(folderPath)) return;
 
-            // 2. Generate the Batch Code
-            string deleteFolderPreset = GenerateDeleteFolderTreeBatch(folderPath);
-
-            // 3. Input the generated code into the Rich Text Box
-            AddToRichTextBox(deleteFolderPreset);
-            ShowToast("Delete Folder Batch code generated with selected path.", 3000, true);
+            string deleteFolderBatch = BatchScriptGenerator.GenerateDeleteFolderTreeBatch(folderPath);
+            AddToRichTextBox(deleteFolderBatch);
+            UIHelper.ShowToast("Delete Folder Batch code generated.", 3000, true);
         }
 
-        private void btnAddStartApplication_Click(object sender, EventArgs e)
+        private void btnLibStartApp_Click(object sender, EventArgs e)
         {
-            // 1. Prompt for the application or file path
-            string filePath = PromptForFile("Select the **Application** or **File** you want to start.");
+            string? filePath = UIHelper.PromptForFile("Select the **Application** or **File** you want to start.");
+            if (string.IsNullOrEmpty(filePath)) return;
 
-            if (string.IsNullOrEmpty(filePath))
-            {
-                ShowToast("Operation cancelled. No file selected.", 3000, false);
-                return;
-            }
-
-            // 2. Generate the command
-            // We use "" as the first argument because 'start' treats the first set of quotes as a window title.
             string startCommand = $@"start """" ""{filePath}""";
-
-            // 3. Input the generated code into the Rich Text Box
             AddToRichTextBox(startCommand);
-            ShowToast("Start Application command generated with selected path.", 3000, true);
+            UIHelper.ShowToast("Start Application command generated.", 3000, true);
         }
 
-        private void btnAddTaskKill_Click(object sender, EventArgs e)
+        private void btnLibKillTask_Click(object sender, EventArgs e)
         {
             AddToRichTextBox(@"taskkill /F /IM ""application name""");
         }
 
-        private void btnAddWaitTime_Click(object sender, EventArgs e)
+        private void btnLibWait_Click(object sender, EventArgs e)
         {
             AddToRichTextBox(@"timeout /t <seconds> /nobreak >nul  REM Waits for specified seconds");
         }
 
-        private void btnReset_Click(object sender, EventArgs e)
+        private void btnActionReset_Click(object sender, EventArgs e)
         {
-            rtbTextToCopy.Clear();
+            rtbBatchContent.Clear();
             txtFileExtension.Text = "bat";
-            btnCopyToClipboard.Enabled = true;
-            btnCopyToClipboard.ForeColor = Color.Black;
+            btnActionCreateClipboard.Enabled = true;
+            btnActionCreateClipboard.ForeColor = Color.White;
         }
 
-        private void btnExitApplication_Click(object sender, EventArgs e)
+        private void btnActionExit_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        private void btnSetApplicationPriority_Click(object sender, EventArgs e)
+        private void btnLibSetPriority_Click(object sender, EventArgs e)
         {
-            // 1. Prompt for Process Name (e.g., "ScreenToGif", "chrome")
-            string processName = Microsoft.VisualBasic.Interaction.InputBox(
-                "Enter the **Process Name** (without .exe) to set priority for.\n\nE.g., **ScreenToGif**, **chrome**, **notepad**.",
-                "Set Application Priority - Process Name",
-                "ScreenToGif" // Default value
-            );
+            string processName = Microsoft.VisualBasic.Interaction.InputBox("Enter the **Process Name** (e.g., ScreenToGif, chrome):", "Process Name", "");
+            if (string.IsNullOrWhiteSpace(processName)) return;
 
-            if (string.IsNullOrWhiteSpace(processName))
-            {
-                ShowToast("Operation cancelled. Process name not provided.", 3000, false);
-                return;
-            }
+            string priorityClass = Microsoft.VisualBasic.Interaction.InputBox("Enter the **Priority Class** (e.g., High, Normal, BelowNormal):", "Priority Class", "High");
+            if (string.IsNullOrWhiteSpace(priorityClass)) priorityClass = "High";
 
-            // Attempt to strip common extensions if the user included them
-            processName = processName.Replace(".exe", "").Replace(".com", "").Replace(".dll", "");
-
-            // 2. Prompt for Priority Class (Using a list of common options)
-            string promptExplanation = "Enter the **Priority Class** for the application:\n\n" +
-                                       "• **RealTime** (Highest, requires Admin)\n" +
-                                       "• **High** (Recommended for safety/critical apps)\n" +
-                                       "• **AboveNormal**\n" +
-                                       "• **Normal** (Default)\n" +
-                                       "• **BelowNormal**\n" +
-                                       "• **Idle** (Lowest)";
-
-            string priorityClass = Microsoft.VisualBasic.Interaction.InputBox(
-                promptExplanation,
-                "Set Application Priority - Priority Class",
-                "High" // Recommended starting priority
-            );
-
-            if (string.IsNullOrWhiteSpace(priorityClass))
-            {
-                ShowToast("Operation cancelled. Priority class not provided.", 3000, false);
-                return;
-            }
-
-            // 3. Generate the Batch Code
-            string priorityBatchPreset = GeneratePrioritySetterBatch(processName, priorityClass);
-
-            // 4. Input the generated code into the Rich Text Box
-            AddToRichTextBox(priorityBatchPreset);
-            ShowToast("Priority Setting Batch code generated. Remember to run the batch file as Administrator!", 4000, true);
+            string priorityBatch = BatchScriptGenerator.GeneratePrioritySetterBatch(processName, priorityClass);
+            AddToRichTextBox(priorityBatch);
+            UIHelper.ShowToast("Priority Setting Batch code generated.", 3000, true);
         }
     }
 }
