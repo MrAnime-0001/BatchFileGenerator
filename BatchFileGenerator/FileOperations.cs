@@ -29,9 +29,17 @@ namespace BatchFileGenerator
 
         public static string SaveBatchFile(string fileName, string content)
         {
-            string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string batchFilePath = Path.Combine(appDirectory, fileName);
+            return SaveBatchFileToPath(AppDomain.CurrentDomain.BaseDirectory, fileName, content);
+        }
 
+        public static string SaveBatchFileToPath(string directory, string fileName, string content)
+        {
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            string batchFilePath = Path.Combine(directory, fileName);
             File.WriteAllText(batchFilePath, content);
             return batchFilePath;
         }

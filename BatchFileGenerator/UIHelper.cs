@@ -104,5 +104,74 @@ namespace BatchFileGenerator
             }
             return null;
         }
+
+        public enum ExportChoice
+        {
+            AppLocation,
+            PickLocation,
+            Cancel
+        }
+
+        public static ExportChoice ShowExportChoiceDialog()
+        {
+            ExportChoice choice = ExportChoice.Cancel;
+
+            Form dialog = new Form
+            {
+                Text = "Select Export Location",
+                Size = new Size(400, 200),
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                StartPosition = FormStartPosition.CenterParent,
+                BackColor = Color.FromArgb(28, 28, 28),
+                ForeColor = Color.White,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                ShowIcon = false,
+                ControlBox = true
+            };
+
+            Label lbl = new Label
+            {
+                Text = "Where would you like to save the file?",
+                Dock = DockStyle.Top,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Height = 60,
+                Font = new Font("Segoe UI Semibold", 11)
+            };
+
+            Button btnAppLoc = new Button
+            {
+                Text = "Application Location",
+                Size = new Size(160, 40),
+                Location = new Point(30, 80),
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Color.FromArgb(0, 122, 204),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold)
+            };
+            btnAppLoc.FlatAppearance.BorderSize = 0;
+
+            Button btnPickLoc = new Button
+            {
+                Text = "Pick Location...",
+                Size = new Size(160, 40),
+                Location = new Point(200, 80),
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Color.FromArgb(63, 63, 70),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold)
+            };
+            btnPickLoc.FlatAppearance.BorderSize = 0;
+
+            btnAppLoc.Click += (s, e) => { choice = ExportChoice.AppLocation; dialog.Close(); };
+            btnPickLoc.Click += (s, e) => { choice = ExportChoice.PickLocation; dialog.Close(); };
+
+            dialog.Controls.Add(btnAppLoc);
+            dialog.Controls.Add(btnPickLoc);
+            dialog.Controls.Add(lbl);
+
+            dialog.ShowDialog();
+            return choice;
+        }
     }
 }

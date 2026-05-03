@@ -61,7 +61,21 @@ namespace BatchFileGenerator
         {
             try
             {
-                string path = FileOperations.SaveBatchFile(fileName, content);
+                UIHelper.ExportChoice choice = UIHelper.ShowExportChoiceDialog();
+                if (choice == UIHelper.ExportChoice.Cancel) return;
+
+                string path;
+                if (choice == UIHelper.ExportChoice.PickLocation)
+                {
+                    string? selectedPath = UIHelper.PromptForPath("Select the folder where you want to save the batch file.");
+                    if (string.IsNullOrEmpty(selectedPath)) return;
+                    path = FileOperations.SaveBatchFileToPath(selectedPath, fileName, content);
+                }
+                else
+                {
+                    path = FileOperations.SaveBatchFile(fileName, content);
+                }
+
                 UIHelper.ShowToast($"✅ Batch file created successfully at:\n{path}", 4000, true);
                 
                 rtbBatchContent.Clear();
