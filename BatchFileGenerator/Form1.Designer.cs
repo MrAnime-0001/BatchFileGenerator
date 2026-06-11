@@ -450,6 +450,7 @@ namespace BatchFileGenerator
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Batch Script Architect";
+            Icon = new Icon(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("BatchFileGenerator.BatchFileGenerator.ico"));
             pnlSidebar.ResumeLayout(false);
             pnlSidebar.PerformLayout();
             pnlMain.ResumeLayout(false);
